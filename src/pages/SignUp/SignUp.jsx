@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import useAuth from '../../hooks/useAuth'
 import LoadingSpinner from '../../components/Shared/LoadingSpinner'
+import { uploadImageToImgBB } from '../../Utils'
 
 const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle, loading, setLoading } = useAuth()
@@ -16,7 +17,7 @@ const SignUp = () => {
 
   if (loading) return <LoadingSpinner />
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     const { name, email, password, photo } = data
     setLoading(true)
 
@@ -24,38 +25,24 @@ const SignUp = () => {
       // 1️⃣ Create user in Firebase Auth
       const result = await createUser(email, password)
 
+      // 2️⃣ Upload photo if provided
       let photoURL = 'https://lh3.googleusercontent.com/a/ACg8ocKUMU3XIX-JSUB80Gj_bYIWfYudpibgdwZE1xqmAGxHASgdvCZZ=s96-c' // default
-
-      // 2️⃣ Upload photo to ImgBB if selected
       if (photo && photo[0]) {
-        const formData = new FormData()
-        formData.append('image', photo[0])
-
-        const imgbbAPIKey = import.meta.env.VITE_IMGBB_API
-        console.log('ImgBB API Key:', imgbbAPIKey) // ✅ check key
-
-        const res = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`, {
-          method: 'POST',
-          body: formData
-        })
-
-        const imgData = await res.json()
-        console.log('ImgBB Response:', imgData) // ✅ check full response
-
-        if (imgData.success) {
-          photoURL = imgData.data.url
-          console.log('Uploaded ImgBB URL:', photoURL) // ✅ final image URL
-        }
+        photoURL = await uploadImageToImgBB(photo[0])
+        console.log('Uploaded ImgBB URL:', photoURL)
       }
 
-      // 3️⃣ Update Firebase user profile
+      // 3️⃣ Update Firebase profile
       await updateUserProfile(name, photoURL)
 
-      toast.success('Signup Successful')
+      // ✅ Show success toast
+      toast.success('Account created successfully!')
+
+      // 4️⃣ Navigate
       navigate(from, { replace: true })
     } catch (err) {
       console.error(err)
-      toast.error(err?.message)
+      toast.error(err?.message || 'Signup failed')
     } finally {
       setLoading(false)
     }
@@ -65,11 +52,11 @@ const SignUp = () => {
     try {
       setLoading(true)
       await signInWithGoogle()
-      toast.success('Signup Successful')
+      toast.success('Signed in with Google!')
       navigate(from, { replace: true })
     } catch (err) {
       console.error(err)
-      toast.error(err?.message)
+      toast.error(err?.message || 'Google sign-in failed')
     } finally {
       setLoading(false)
     }
