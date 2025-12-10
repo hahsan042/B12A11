@@ -1,49 +1,67 @@
-import { Link } from 'react-router'
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import LoadingSpinner from "../Shared/LoadingSpinner";
 
 const Card = () => {
-  return (
-    <Link
-      to={`/plant/1`}
-      className='col-span-1 cursor-pointer group shadow-xl p-3 rounded-xl'
-    >
-      <div className='flex flex-col gap-2 w-full'>
-        <div
-          className='
-              aspect-square 
-              w-full 
-              relative 
-              overflow-hidden 
-              rounded-xl
-            '
-        >
-          <img
-            className='
-                object-cover 
-                h-full 
-                w-full 
-                group-hover:scale-110 
-                transition
-              '
-            src='https://i.ibb.co.com/rMHmQP2/money-plant-in-feng-shui-brings-luck.jpg'
-            alt='Plant Image'
-          />
-          <div
-            className='
-              absolute
-              top-3
-              right-3
-            '
-          ></div>
-        </div>
-        <div className='font-semibold text-lg'>Money Plant</div>
-        <div className='font-semibold text-lg'>Category: Indoor</div>
-        <div className='font-semibold text-lg'>Quantity: 10</div>
-        <div className='flex flex-row items-center gap-1'>
-          <div className='font-semibold'> Price: 15$</div>
-        </div>
-      </div>
-    </Link>
-  )
-}
+  // Fetch all meals from backend
+  const { data: meals, isLoading, isError } = useQuery({
+    queryKey: ["meals"],
+    queryFn: async () => {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/add-food`);
+      return response.data;
+    },
+  });
 
-export default Card
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) return <div className="text-red-500 text-center">Error fetching meals.</div>;
+
+  return (
+    <>
+      {meals.length === 0 && <div className="col-span-full text-center text-gray-500">No meals available.</div>}
+
+      {meals.map((meal) => (
+        <div
+          key={meal._id}
+          className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden flex flex-col"
+        >
+          {/* Food Image */}
+          <div className="relative w-full h-64 overflow-hidden">
+            <img
+              src={meal.foodImage}
+              alt={meal.foodName}
+              className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
+          {/* Meal Info */}
+          <div className="p-5 flex flex-col gap-2">
+            <h3 className="text-xl font-bold text-gray-800">{meal.foodName}</h3>
+            <p className="text-gray-600 font-medium">Chef: {meal.chefName}</p>
+            <p className="text-gray-500 text-sm">Chef ID: {meal.chefId}</p>
+
+            <div className="flex items-center justify-between mt-2">
+              <span className="text-green-600 font-semibold text-lg">${meal.price}</span>
+              <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-md text-sm font-medium">
+                ⭐ {meal.rating}
+              </span>
+            </div>
+
+            <p className="text-gray-500 mt-2 text-sm">
+              Delivery Area: {meal.deliveryArea || "All Areas"}
+            </p>
+
+            <Link
+              to={`/meals/${meal._id}`}
+              className="mt-4 w-full text-center py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition-colors duration-300"
+            >
+              See Details
+            </Link>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+};
+
+export default Card;

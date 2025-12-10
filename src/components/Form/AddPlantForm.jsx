@@ -16,8 +16,8 @@ const CreateMealForm = () => {
   const addMealMutation = useMutation({
     mutationFn: async (mealData) => {
       const token = await user.getIdToken();
-      const response = await axios.post(
-        "http://localhost:3000/add-food",
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/add-food`,
+      
         mealData,
         {
           headers: { Authorization: `Bearer ${token}` },

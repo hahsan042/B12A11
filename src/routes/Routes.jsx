@@ -2,7 +2,6 @@ import Home from '../pages/Home/Home'
 import ErrorPage from '../pages/ErrorPage'
 import Login from '../pages/Login/Login'
 import SignUp from '../pages/SignUp/SignUp'
-import PlantDetails from '../pages/PlantDetails/PlantDetails'
 import PrivateRoute from './PrivateRoute'
 import DashboardLayout from '../layouts/DashboardLayout'
 import AddPlant from '../pages/Dashboard/Seller/AddPlant'
@@ -14,6 +13,8 @@ import MyInventory from '../pages/Dashboard/Seller/MyInventory'
 import ManageOrders from '../pages/Dashboard/Seller/ManageOrders'
 import MyOrders from '../pages/Dashboard/Customer/MyOrders'
 import { createBrowserRouter } from 'react-router'
+import MealDetailsPage from '../pages/MealDetailsPage/MealDetailsPage'
+import Meals from '../components/Home/Meals'
 
 export const router = createBrowserRouter([
   {
@@ -26,9 +27,19 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/plant/:id',
-        element: <PlantDetails />,
+        path: '/meals',
+        element: <Meals />,
       },
+      {
+  path: '/meals/:id',
+  element: (
+    <PrivateRoute>
+      <MealDetailsPage />
+    </PrivateRoute>
+  ),
+},
+
+     
     ],
   },
   { path: '/login', element: <Login /> },
