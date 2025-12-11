@@ -58,7 +58,12 @@ const MealDetailsPage = () => {
       >
         Order Now
       </button>
-     <ReviewSection></ReviewSection>
+    <ReviewSection
+  foodId={meal._id}
+  meal={meal}
+  onReviewSubmit={() => queryClient.invalidateQueries(["meal", id])}
+/>
+
     </div>
   );
 };

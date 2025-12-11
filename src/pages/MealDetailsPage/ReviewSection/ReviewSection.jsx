@@ -1,143 +1,175 @@
-// src/components/Meal/ReviewSection.jsx
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
+import toast from "react-hot-toast";
 
-
-const ReviewSection = ({ mealId }) => {
+const ReviewSection = ({ foodId, meal, onReviewSubmit }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const [reviewText, setReviewText] = useState("");
-  const [reviewRating, setReviewRating] = useState(5);
-
-  // Fetch all reviews for this meal
-  const { data: reviews } = useQuery({
-    queryKey: ["reviews", mealId],
+  // Fetch all reviews of this meal
+  const { data: reviews = [], isLoading } = useQuery({
+    queryKey: ["reviews", foodId],
     queryFn: async () => {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/reviews/${mealId}`);
-      return response.data;
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/reviews/${foodId}`);
+      return res.data;
     },
   });
 
-  // Mutation to submit a new review
-  const addReviewMutation = useMutation({
-    mutationFn: async (newReview) => {
-      if (!user) throw new Error("User must be logged in");
-      const token = await user.getIdToken();
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/reviews/${mealId}`,
-        newReview,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      return response.data;
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+
+  // Submit Review Mutation
+
+const reviewMutation = useMutation({
+  mutationFn: async ({ reviewData, token }) => {
+    return await axios.post(
+      `${import.meta.env.VITE_API_URL}/reviews`,
+      reviewData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  },
+  onSuccess: () => {
+    toast.success("Review submitted successfully!");
+    queryClient.invalidateQueries(["reviews", foodId]);
+    setComment("");
+  },
+  onError: (err) => {
+    console.log(err);
+    toast.error("Failed to submit review");
+  },
+});
+
+
+
+
+  // Favorite Mutation
+  const favoriteMutation = useMutation({
+    mutationFn: async (favData) => {
+      return await axios.post(`${import.meta.env.VITE_API_URL}/favorites`, favData, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["reviews", mealId]);
-      setReviewText("");
-      setReviewRating(5);
-      alert("Review submitted successfully!");
+      toast.success("Added to Favorites!");
+    },
+    onError: () => {
+      toast.error("Already in Favorites!");
     },
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!reviewText) return alert("Please write a review.");
+const handleSubmitReview = async () => {
+  if (!user) return toast.error("Please login to submit review!");
 
-    const reviewData = {
-      userId: user.uid,
-      userName: user.displayName,
-      userImage: user.photoURL || "",
-      text: reviewText,
-      rating: reviewRating,
-      createdAt: new Date(),
-    };
+  const token = await user.getIdToken();
 
-    addReviewMutation.mutate(reviewData);
+  const reviewData = {
+    foodId,
+    reviewerName: user.displayName,
+    reviewerImage: user.photoURL,
+    reviewerEmail: user.email,
+    rating,
+    comment,
+    date: new Date().toISOString(),
   };
 
-  return (
-    <div className="mt-10">
-      <h2 className="text-2xl font-bold mb-4">Reviews</h2>
+  reviewMutation.mutate({ reviewData, token });
+};
 
-      {/* Existing Reviews */}
-      <div className="space-y-4">
-        {reviews && reviews.length > 0 ? (
+
+  const handleAddToFavorite = () => {
+    if (!user) return toast.error("Please login first!");
+
+    const favData = {
+      userEmail: user.email,
+      mealId: meal._id,
+      mealName: meal.foodName,
+      chefId: meal.chefId,
+      chefName: meal.chefName,
+      price: meal.price,
+      addedTime: new Date().toISOString(),
+    };
+
+    favoriteMutation.mutate(favData);
+  };
+
+  if (isLoading) return <p>Loading reviews...</p>;
+
+  return (
+    <div className="mt-10 p-6 bg-gray-50 rounded-xl">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Reviews</h2>
+
+        <button
+          onClick={handleAddToFavorite}
+          className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+        >
+          ⭐ Add to Favorite
+        </button>
+      </div>
+
+      {/* Show All Reviews */}
+      <div className="space-y-4 mb-6">
+        {reviews.length === 0 ? (
+          <p>No reviews yet.</p>
+        ) : (
           reviews.map((rev) => (
-            <div
-              key={rev._id}
-              className="border p-3 rounded-lg shadow-sm flex gap-3 items-start"
-            >
-              {/* Reviewer Image */}
-              {rev.userImage && (
+            <div key={rev._id} className="p-4 bg-white rounded-xl shadow">
+              <div className="flex items-center gap-3">
                 <img
-                  src={rev.userImage}
-                  alt={rev.userName}
-                  className="w-12 h-12 rounded-full object-cover"
+                  src={rev.reviewerImage}
+                  alt=""
+                  className="w-12 h-12 rounded-full"
                 />
-              )}
-              <div className="flex-1">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">{rev.userName}</span>
-                  <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-md text-sm font-medium">
-                    ⭐ {rev.rating}
-                  </span>
+                <div>
+                  <h4 className="font-semibold">{rev.reviewerName}</h4>
+                  <p className="text-yellow-500">⭐ {rev.rating}</p>
                 </div>
-                <p className="mt-1 text-gray-700">{rev.text}</p>
-                <p className="text-xs text-gray-400">
-                  {new Date(rev.createdAt).toLocaleString()}
-                </p>
               </div>
+              <p className="mt-2">{rev.comment}</p>
+              <p className="text-sm text-gray-500">
+                {new Date(rev.date).toLocaleDateString()}
+              </p>
             </div>
           ))
-        ) : (
-          <p className="text-gray-500">No reviews yet.</p>
         )}
       </div>
 
       {/* Add Review Form */}
-      <form onSubmit={handleSubmit} className="mt-6 space-y-3">
+      <div className="p-4 bg-white rounded-xl shadow-lg">
+        <h3 className="text-xl font-semibold mb-2">Give Review</h3>
+
+        <select
+          className="border w-full p-2 rounded mb-3"
+          value={rating}
+          onChange={(e) => setRating(Number(e.target.value))}
+        >
+          <option value={5}>5 - Excellent</option>
+          <option value={4}>4 - Good</option>
+          <option value={3}>3 - Average</option>
+          <option value={2}>2 - Poor</option>
+          <option value={1}>1 - Bad</option>
+        </select>
+
         <textarea
-          value={reviewText}
-          onChange={(e) => setReviewText(e.target.value)}
+          className="border w-full p-2 rounded"
           placeholder="Write your review..."
-          className="w-full border p-3 rounded-lg"
-        />
-        <div className="flex items-center gap-3">
-          <label className="font-medium">Rating:</label>
-          <select
-            value={reviewRating}
-            onChange={(e) => setReviewRating(Number(e.target.value))}
-            className="border rounded-lg p-1"
-          >
-            {[5, 4, 3, 2, 1].map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        ></textarea>
 
-          {/* Give Review Button */}
-          <button
-            type="submit"
-            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
-          >
-            Give Review
-          </button>
-
-          {/* Add to Favorite Button */}
-          <button
-            type="button"
-            onClick={() => alert("Added to favorites!")}
-            className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
-          >
-            Add to Favorite
-          </button>
-        </div>
-      </form>
+        <button
+          onClick={handleSubmitReview}
+          className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Submit Review
+        </button>
+      </div>
     </div>
   );
 };
