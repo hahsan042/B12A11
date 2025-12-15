@@ -1,7 +1,8 @@
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import UpdatePlantForm from '../Form/UpdatePlantForm'
 
-const UpdatePlantModal = ({ setIsEditModalOpen, isOpen }) => {
+
+const UpdatePlantModal = ({ setIsEditModalOpen, isOpen ,meal }) => {
   return (
     <Dialog
       open={isOpen}
@@ -13,7 +14,7 @@ const UpdatePlantModal = ({ setIsEditModalOpen, isOpen }) => {
         <div className='flex min-h-full items-center justify-center p-4'>
           <DialogPanel
             transition
-            className='w-full max-w-md bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0 shadow-xl rounded-2xl'
+            className='w-full  bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0 shadow-xl rounded-2xl'
           >
             <div className='flex justify-end'>
               <button
@@ -30,7 +31,7 @@ const UpdatePlantModal = ({ setIsEditModalOpen, isOpen }) => {
               Update Plant Info
             </DialogTitle>
             <div className='mt-2 w-full'>
-              <UpdatePlantForm />
+              <UpdatePlantForm meal={meal} />
             </div>
           </DialogPanel>
         </div>

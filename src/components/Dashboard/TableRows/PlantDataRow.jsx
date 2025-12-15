@@ -51,19 +51,7 @@ const PlantDataRow = ({meal ,refetchOrders}) => {
         <p className='text-gray-900 '>{meal.chefId}</p>
       </td>
 
-      {/* <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <span
-          onClick={openModal}
-          className='relative cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight'
-        >
-          <span
-            aria-hidden='true'
-            className='absolute inset-0 bg-red-200 opacity-50 rounded-full'
-          ></span>
-          <span className='relative'>Delete</span>
-        </span>
-        <DeleteModal isOpen={isOpen} closeModal={closeModal} />
-      </td> */}
+    
        <td>
         <span onClick={openModal}>Delete</span>
      <DeleteModal
@@ -75,6 +63,7 @@ const PlantDataRow = ({meal ,refetchOrders}) => {
 />
 
       </td>
+      
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
         <span
           onClick={() => setIsEditModalOpen(true)}
@@ -89,6 +78,7 @@ const PlantDataRow = ({meal ,refetchOrders}) => {
         <UpdatePlantModal
           isOpen={isEditModalOpen}
           setIsEditModalOpen={setIsEditModalOpen}
+           meal={meal} 
         />
       </td>
     </tr>
