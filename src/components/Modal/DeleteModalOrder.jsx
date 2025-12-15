@@ -2,31 +2,27 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-const DeleteModal = ({ closeModal, isOpen, meal, user, refetchOrders }) => {
-  console.log(user);
-  
+const DeleteModalOrder = ({ closeModal, isOpen, orderId, user, refetchOrders }) => {
 const handleDelete = async () => {
-  if (!user) return Swal.fire('Error!', 'User not found', 'error');
-
   try {
+    if (!user) throw new Error('User not found');
+
     const token = await user.getIdToken();
 
-await axios.delete(`${import.meta.env.VITE_API_URL}/add-food/${meal._id}`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
+    await axios.delete(`${import.meta.env.VITE_API_URL}/orders/${orderId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-
-    Swal.fire('Deleted!', 'Your item has been deleted.', 'success');
+    Swal.fire('Deleted!', 'Your order has been cancelled.', 'success');
     closeModal();
 
-    refetchOrders?.(); // refresh UI
+    // Refresh orders dynamically
+    if (refetchOrders) refetchOrders();
   } catch (err) {
     console.error(err);
-    Swal.fire('Error!', 'Failed to delete item.', 'error');
+    Swal.fire('Error!', 'Failed to cancel order.', 'error');
   }
 };
-
-
 
 
   return (
@@ -71,4 +67,4 @@ await axios.delete(`${import.meta.env.VITE_API_URL}/add-food/${meal._id}`, {
   );
 };
 
-export default DeleteModal;
+export default DeleteModalOrder;

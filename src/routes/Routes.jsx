@@ -15,6 +15,7 @@ import MyOrders from '../pages/Dashboard/Customer/MyOrders'
 import { createBrowserRouter } from 'react-router'
 import MealDetailsPage from '../pages/MealDetailsPage/MealDetailsPage'
 import Meals from '../components/Home/Meals'
+import OrderPage from '../pages/OrderPage/OrderPage'
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,14 @@ export const router = createBrowserRouter([
     </PrivateRoute>
   ),
 },
+{
+  path:'/order/:id',
+  element:(
+    <PrivateRoute>
+      <OrderPage></OrderPage>
+    </PrivateRoute>
+  )
+}
 
      
     ],

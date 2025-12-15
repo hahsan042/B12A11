@@ -1,6 +1,26 @@
+import { useQuery } from '@tanstack/react-query';
 import PlantDataRow from '../../../components/Dashboard/TableRows/PlantDataRow'
+import useAuth from '../../../hooks/useAuth';
+import axios from 'axios';
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 
 const MyInventory = () => {
+   const { user } = useAuth();
+  
+    const { data: meals, isLoading, isError, refetch } = useQuery({
+      queryKey: ['inventory', user?.email],
+      queryFn: async () => {
+        const token = await user.getIdToken();
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/my-inventory/${user.email}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        return res.data;
+      },
+      enabled: !!user,
+    });
+  
+    if (isLoading) return <LoadingSpinner/>;
+    if (isError) return <div className="text-red-500 text-center">Failed to load orders.</div>;
   return (
     <>
       <div className='container mx-auto px-4 sm:px-8'>
@@ -26,7 +46,7 @@ const MyInventory = () => {
                       scope='col'
                       className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
                     >
-                      Category
+                      Rating
                     </th>
                     <th
                       scope='col'
@@ -38,7 +58,19 @@ const MyInventory = () => {
                       scope='col'
                       className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
                     >
-                      Quantity
+                      Ingredients
+                    </th>
+                       <th
+                      scope='col'
+                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                    >
+                      Chef Name
+                    </th>
+                       <th
+                      scope='col'
+                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                    >
+                      Chef ID 
                     </th>
 
                     <th
@@ -55,9 +87,23 @@ const MyInventory = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody>
-                  <PlantDataRow />
-                </tbody>
+                 <tbody>
+                {meals.length > 0 ? (
+                  meals.map((meal) => (
+                    <PlantDataRow
+                      key={meal._id}
+                      meal={meal}
+                      refetchOrders={refetch} // Pass refetch for automatic UI refresh
+                    />
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="text-center py-4">
+                      No meals found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
               </table>
             </div>
           </div>
