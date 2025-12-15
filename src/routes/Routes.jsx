@@ -16,6 +16,8 @@ import { createBrowserRouter } from 'react-router'
 import MealDetailsPage from '../pages/MealDetailsPage/MealDetailsPage'
 import Meals from '../components/Home/Meals'
 import OrderPage from '../pages/OrderPage/OrderPage'
+import FavoriteMeals from '../pages/Dashboard/Customer/favoriteMeal'
+import MyReviews from '../pages/Dashboard/Customer/myReview'
 
 export const router = createBrowserRouter([
   {
@@ -85,6 +87,23 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+       
+       {
+  path: "favorite-meals",
+  element: (
+    <PrivateRoute>
+      <FavoriteMeals />
+    </PrivateRoute>
+  )
+},
+{
+  path: 'my-reviews',
+  element: (
+    <PrivateRoute>
+      <MyReviews/>
+    </PrivateRoute>
+  ),
+},
       {
         path: 'manage-users',
         element: (

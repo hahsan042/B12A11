@@ -1,4 +1,7 @@
 import { BsFingerprint } from 'react-icons/bs'
+import { BsHeartFill } from 'react-icons/bs'
+import { AiFillStar } from 'react-icons/ai';
+
 import { GrUserAdmin } from 'react-icons/gr'
 import MenuItem from './MenuItem'
 import { useState } from 'react'
@@ -24,6 +27,13 @@ const CustomerMenu = () => {
       </div>
 
       <BecomeSellerModal closeModal={closeModal} isOpen={isOpen} />
+
+      <MenuItem icon={BsHeartFill} label='My favouite' address='favorite-meals' />
+        <MenuItem icon={AiFillStar} label='My review' address='my-reviews' />
+      
+
+      
+
     </>
   )
 }
