@@ -1,56 +1,177 @@
-import { useState } from 'react'
-import DeleteModal from '../../Modal/DeleteModal'
-const SellerOrderDataRow = () => {
-  let [isOpen, setIsOpen] = useState(false)
-  const closeModal = () => setIsOpen(false)
+// // import useAxiosSecure from '../../../hooks/useAxiosSecure';
+
+// // const SellerOrderDataRow = ({ order, refetch }) => {
+// //   const axiosSecure = useAxiosSecure();
+
+// //   const updateStatus = async (status) => {
+// //     try {
+// //       await axiosSecure.patch(`/orders/${order._id}/status`, { status });
+// //       refetch();
+// //     } catch (err) {
+// //       console.error(err.response?.data || err);
+// //     }
+// //   };
+
+// //   const isCancelled = order.orderStatus === 'cancelled';
+// //   const isAccepted = order.orderStatus === 'accepted';
+// //   const isDelivered = order.orderStatus === 'delivered';
+
+// //   return (
+// //     <tr>
+// //       <td>{order.mealName}</td>
+// //       <td>${order.price}</td>
+// //       <td>{order.quantity}</td>
+// //       <td>{order.userEmail}</td>
+// //       <td>{order.userAddress}</td>
+// //       <td>{order.orderStatus}</td>
+// //       <td>{order.paymentStatus}</td>
+// //       <td className="flex gap-2">
+// //         {/* Cancel Button */}
+// //         <button
+// //           disabled={isCancelled || isDelivered}
+// //           onClick={() => updateStatus('cancelled')}
+// //           className="btn btn-sm bg-red-500 text-white disabled:opacity-50"
+// //         >
+// //           Cancel
+// //         </button>
+
+// //         {/* Accept Button */}
+// //         <button
+// //           disabled={isAccepted || isCancelled || isDelivered}
+// //           onClick={() => updateStatus('accepted')}
+// //           className="btn btn-sm bg-green-500 text-white disabled:opacity-50"
+// //         >
+// //           Accept
+// //         </button>
+
+// //         {/* Deliver Button */}
+// //         <button
+// //           disabled={!isAccepted}
+// //           onClick={() => updateStatus('delivered')}
+// //           className="btn btn-sm bg-blue-500 text-white disabled:opacity-50"
+// //         >
+// //           Deliver
+// //         </button>
+// //       </td>
+// //     </tr>
+// //   );
+// // };
+
+// // export default SellerOrderDataRow;
+// import useAxiosSecure from '../../../hooks/useAxiosSecure';
+
+// const SellerOrderDataRow = ({ order, refetch }) => {
+//   const axiosSecure = useAxiosSecure();
+
+//   const updateStatus = async (status) => {
+//     try {
+//       await axiosSecure.patch(`/orders/${order._id}/status`, { status });
+//       refetch();
+//     } catch (err) {
+//       console.error(err.response?.data || err);
+//     }
+//   };
+
+//   const isCancelled = order.orderStatus === 'cancelled';
+//   const isAccepted = order.orderStatus === 'accepted';
+//   const isDelivered = order.orderStatus === 'delivered';
+
+//   return (
+//     <tr>
+//       <td>{order.mealName}</td>
+//       <td>{order.userEmail}</td>
+//       <td>${order.price}</td>
+//       <td>{order.quantity}</td>
+//       <td>{order.userAddress}</td>
+//       <td>{order.orderStatus}</td>
+//       <td>{order.paymentStatus}</td>
+//       <td className="flex gap-2">
+//         <button
+//           disabled={isCancelled || isDelivered}
+//           onClick={() => updateStatus('cancelled')}
+//           className="btn btn-sm bg-red-500 text-white disabled:opacity-50"
+//         >
+//           Cancel
+//         </button>
+
+//         <button
+//           disabled={isAccepted || isCancelled || isDelivered}
+//           onClick={() => updateStatus('accepted')}
+//           className="btn btn-sm bg-green-500 text-white disabled:opacity-50"
+//         >
+//           Accept
+//         </button>
+
+//         <button
+//           disabled={!isAccepted}
+//           onClick={() => updateStatus('delivered')}
+//           className="btn btn-sm bg-blue-500 text-white disabled:opacity-50"
+//         >
+//           Deliver
+//         </button>
+//       </td>
+//     </tr>
+//   );
+// };
+
+// export default SellerOrderDataRow;
+
+
+
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
+
+const SellerOrderDataRow = ({ order, refetch }) => {
+  const axiosSecure = useAxiosSecure();
+
+  const updateStatus = async (status) => {
+    try {
+      await axiosSecure.patch(`/orders/${order._id}/status`, { status });
+      refetch();
+    } catch (err) {
+      console.error(err.response?.data || err);
+    }
+  };
+
+  const isCancelled = order.orderStatus === 'cancelled';
+  const isAccepted = order.orderStatus === 'accepted';
+  const isDelivered = order.orderStatus === 'delivered';
 
   return (
     <tr>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>Money Plant</p>
-      </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>abc@gmail.com</p>
-      </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>$120</p>
-      </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>5</p>
-      </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>Dhaka</p>
-      </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>Pending</p>
-      </td>
+      <td>{order.mealName}</td>
+      <td>{order.userEmail}</td>
+      <td>${order.price}</td>
+      <td>{order.quantity}</td>
+      <td>{order.userAddress}</td>
+      <td>{order.orderStatus}</td>
+      <td>{order.paymentStatus}</td>
+      <td className="flex gap-2">
+        <button
+          disabled={isCancelled || isDelivered}
+          onClick={() => updateStatus('cancelled')}
+          className="btn btn-sm bg-red-500 text-white disabled:opacity-50"
+        >
+          Cancel
+        </button>
 
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <div className='flex items-center gap-2'>
-          <select
-            required
-            className='p-1 border-2 border-lime-300 focus:outline-lime-500 rounded-md text-gray-900  bg-white'
-            name='category'
-          >
-            <option value='Pending'>Pending</option>
-            <option value='In Progress'>Start Processing</option>
-            <option value='Delivered'>Deliver</option>
-          </select>
-          <button
-            onClick={() => setIsOpen(true)}
-            className='relative disabled:cursor-not-allowed cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight'
-          >
-            <span
-              aria-hidden='true'
-              className='absolute inset-0 bg-red-200 opacity-50 rounded-full'
-            ></span>
-            <span className='relative'>Cancel</span>
-          </button>
-        </div>
-        <DeleteModal isOpen={isOpen} closeModal={closeModal} />
+        <button
+          disabled={isAccepted || isCancelled || isDelivered}
+          onClick={() => updateStatus('accepted')}
+          className="btn btn-sm bg-green-500 text-white disabled:opacity-50"
+        >
+          Accept
+        </button>
+
+        <button
+          disabled={!isAccepted}
+          onClick={() => updateStatus('delivered')}
+          className="btn btn-sm bg-blue-500 text-white disabled:opacity-50"
+        >
+          Deliver
+        </button>
       </td>
     </tr>
-  )
-}
+  );
+};
 
-export default SellerOrderDataRow
+export default SellerOrderDataRow;

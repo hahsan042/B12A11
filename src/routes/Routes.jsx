@@ -18,6 +18,7 @@ import Meals from '../components/Home/Meals'
 import OrderPage from '../pages/OrderPage/OrderPage'
 import FavoriteMeals from '../pages/Dashboard/Customer/favoriteMeal'
 import MyReviews from '../pages/Dashboard/Customer/myReview'
+import PaymentSuccessPage from '../pages/payment/PaymentSuccessPage'
 
 export const router = createBrowserRouter([
   {
@@ -48,7 +49,15 @@ export const router = createBrowserRouter([
       <OrderPage></OrderPage>
     </PrivateRoute>
   )
-}
+},
+{
+  path: '/payment-success',
+  element: (
+    <PrivateRoute>
+      <PaymentSuccessPage/>
+    </PrivateRoute>
+  ),
+},
 
      
     ],
@@ -87,6 +96,9 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+  
+
+
        
        {
   path: "favorite-meals",
