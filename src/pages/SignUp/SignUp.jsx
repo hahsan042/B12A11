@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import useAuth from '../../hooks/useAuth'
 import LoadingSpinner from '../../components/Shared/LoadingSpinner'
-import { uploadImageToImgBB } from '../../Utils'
+import { saveOrUpdateUser, uploadImageToImgBB } from '../../Utils'
 
 const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle, loading, setLoading } = useAuth()
@@ -22,23 +22,26 @@ const SignUp = () => {
     setLoading(true)
 
     try {
-      // 1️⃣ Create user in Firebase Auth
-      const result = await createUser(email, password)
-
-      // 2️⃣ Upload photo if provided
+      // 1️⃣ Upload photo if provided
       let photoURL = 'https://lh3.googleusercontent.com/a/ACg8ocKUMU3XIX-JSUB80Gj_bYIWfYudpibgdwZE1xqmAGxHASgdvCZZ=s96-c' // default
       if (photo && photo[0]) {
         photoURL = await uploadImageToImgBB(photo[0])
         console.log('Uploaded ImgBB URL:', photoURL)
       }
 
-      // 3️⃣ Update Firebase profile
+      // 2️⃣ Create user in Firebase Auth
+      const result = await createUser(email, password)
+
+      // 3️⃣ Save user to your DB
+      await saveOrUpdateUser({ name, email, image: photoURL })
+
+      // 4️⃣ Update Firebase profile
       await updateUserProfile(name, photoURL)
 
       // ✅ Show success toast
       toast.success('Account created successfully!')
 
-      // 4️⃣ Navigate
+      // 5️⃣ Navigate
       navigate(from, { replace: true })
     } catch (err) {
       console.error(err)
@@ -48,19 +51,29 @@ const SignUp = () => {
     }
   }
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setLoading(true)
-      await signInWithGoogle()
-      toast.success('Signed in with Google!')
-      navigate(from, { replace: true })
-    } catch (err) {
-      console.error(err)
-      toast.error(err?.message || 'Google sign-in failed')
-    } finally {
-      setLoading(false)
-    }
+const handleGoogleSignIn = async () => {
+  try {
+    setLoading(true)
+    const result = await signInWithGoogle()
+    const user = result.user
+
+    // ✅ Save or update user in your DB
+    await saveOrUpdateUser({
+      name: user.displayName || 'No Name',
+      email: user.email,
+      image: user.photoURL || 'https://lh3.googleusercontent.com/a/ACg8ocKUMU3XIX-JSUB80Gj_bYIWfYudpibgdwZE1xqmAGxHASgdvCZZ=s96-c'
+    })
+
+    toast.success('Signed in with Google!')
+    navigate(from, { replace: true })
+  } catch (err) {
+    console.error(err)
+    toast.error(err?.message || 'Google sign-in failed')
+  } finally {
+    setLoading(false)
   }
+}
+
 
   return (
     <div className='flex justify-center items-center min-h-screen bg-gray-50'>

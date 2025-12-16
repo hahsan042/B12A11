@@ -13,32 +13,28 @@ const useAxiosSecure = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!loading && user?.accessToken) {
-      // Add request interceptor
+    if (!loading && user) {
       const requestInterceptor = axiosInstance.interceptors.request.use(
-        config => {
-          config.headers.Authorization = `Bearer ${user.accessToken}`
+        async (config) => {
+
+          const token = await user.getIdToken() // Firebase থেকে ID Token
+config.headers.Authorization = `Bearer ${token}`
+
+
           return config
         }
       )
 
-      // Add response interceptor
       const responseInterceptor = axiosInstance.interceptors.response.use(
         res => res,
         err => {
           if (err?.response?.status === 401 || err?.response?.status === 403) {
-            logOut()
-              .then(() => {
-                console.log('Logged out successfully.')
-              })
-              .catch(console.error)
-            navigate('/login')
+            logOut().then(() => navigate('/login'))
           }
           return Promise.reject(err)
         }
       )
 
-      // Cleanup to prevent multiple interceptors on re-renders
       return () => {
         axiosInstance.interceptors.request.eject(requestInterceptor)
         axiosInstance.interceptors.response.eject(responseInterceptor)
@@ -48,4 +44,5 @@ const useAxiosSecure = () => {
 
   return axiosInstance
 }
+
 export default useAxiosSecure

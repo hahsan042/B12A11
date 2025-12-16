@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import LoadingSpinner from '../../components/Shared/LoadingSpinner'
 import useAuth from '../../hooks/useAuth'
 import { TbFidgetSpinner } from 'react-icons/tb'
+import { saveOrUpdateUser } from '../../Utils'   // ✅ added
 
 const Login = () => {
   const { signIn, loading, user, setLoading } = useAuth()
@@ -23,12 +24,28 @@ const Login = () => {
   const onSubmit = async data => {
     const { email, password } = data
     try {
-      await signIn(email, password)
+      setLoading(true)
+
+      // 1️⃣ Firebase login
+      const result = await signIn(email, password)
+      const loggedUser = result.user
+
+      // 2️⃣ Save / Update user in DB
+      await saveOrUpdateUser({
+        name: loggedUser.displayName || 'No Name',
+        email: loggedUser.email,
+        image:
+          loggedUser.photoURL ||
+          'https://lh3.googleusercontent.com/a/ACg8ocKUMU3XIX-JSUB80Gj_bYIWfYudpibgdwZE1xqmAGxHASgdvCZZ=s96-c',
+      })
+
       toast.success('Login Successful')
       navigate(from, { replace: true })
     } catch (err) {
       console.error(err)
-      toast.error(err?.message)
+      toast.error(err?.message || 'Login failed')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -61,7 +78,9 @@ const Login = () => {
               focus:ring-2 focus:ring-lime-500 focus:border-lime-500 transition
               ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
             />
-            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -78,7 +97,9 @@ const Login = () => {
               focus:ring-2 focus:ring-lime-500 focus:border-lime-500 transition
               ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
             />
-            {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>
+            )}
           </div>
 
           {/* Login Button */}
