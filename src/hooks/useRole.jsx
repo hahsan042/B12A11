@@ -15,6 +15,7 @@ const useRole = () => {
     queryFn: async () => {
      
       const { data } = await axiosSecure(`/user/role/${user?.email}`)
+      
       return data.role
     },
   })

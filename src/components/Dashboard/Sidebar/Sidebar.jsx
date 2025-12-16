@@ -13,9 +13,11 @@ import MenuItem from './Menu/MenuItem'
 import AdminMenu from './Menu/AdminMenu'
 import SellerMenu from './Menu/SellerMenu'
 import CustomerMenu from './Menu/CustomerMenu'
+import useRole from '../../../hooks/useRole'
 
 const Sidebar = () => {
   const { logOut } = useAuth()
+    const { role, isRoleLoading } = useRole()
   const [isActive, setActive] = useState(false)
 
   // Sidebar Responsive Handler
@@ -71,9 +73,10 @@ const Sidebar = () => {
                 address='/dashboard'
               />
               {/* Role-Based Menu */}
-              <CustomerMenu />
-              <SellerMenu />
-              <AdminMenu />
+            {/* Role Based Menu */}
+            {!isRoleLoading && role === 'user' && <CustomerMenu />}
+            {!isRoleLoading && role === 'chef' && <SellerMenu />}
+            {!isRoleLoading && role === 'admin' && <AdminMenu />}
             </nav>
           </div>
 
