@@ -1,68 +1,8 @@
-// import useAuth from '../../../hooks/useAuth'
-// import coverImg from '../../../assets/images/cover.jpg'
-// import useRole from '../../../hooks/useRole'
 
-// const Profile = () => {
-//   const { user } = useAuth()
-//   const {role, isRoleLoading }=useRole()
-
-//   return (
-//     <div className='flex justify-center items-center h-screen'>
-//       <div className='bg-white shadow-lg rounded-2xl md:w-4/5 lg:w-3/5'>
-//         <img
-//           alt='cover photo'
-//           src={coverImg}
-//           className='w-full mb-4 rounded-t-lg h-56'
-//         />
-//         <div className='flex flex-col items-center justify-center p-4 -mt-16'>
-//           <a href='#' className='relative block'>
-//             <img
-//               alt='profile'
-//               src={user?.photoURL}
-//               className='mx-auto object-cover rounded-full h-24 w-24  border-2 border-white '
-//             />
-//           </a>
-
-//           <p className='p-2 px-4 text-xs text-white bg-lime-500 rounded-full'>
-//           {role}
-//           </p>
-//           <p className='mt-2 text-xl font-medium text-gray-800 '>
-//             User Id: {user?.uid}
-//           </p>
-//           <div className='w-full p-2 mt-4 rounded-lg'>
-//             <div className='flex flex-wrap items-center justify-between text-sm text-gray-600 '>
-//               <p className='flex flex-col'>
-//                 Name
-//                 <span className='font-bold text-gray-600 '>
-//                   {user?.displayName}
-//                 </span>
-//               </p>
-//               <p className='flex flex-col'>
-//                 Email
-//                 <span className='font-bold text-gray-600 '>{user?.email}</span>
-//               </p>
-
-//               <div>
-//                 <button className='bg-lime-500  px-10 py-1 rounded-lg text-white cursor-pointer hover:bg-lime-800 block mb-1'>
-//                   Update Profile
-//                 </button>
-//                 <button className='bg-lime-500 px-7 py-1 rounded-lg text-white cursor-pointer hover:bg-lime-800'>
-//                   Change Password
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Profile
 
 
 import useAuth from '../../../hooks/useAuth'
-import coverImg from '../../../assets/images/cover.jpg'
+import coverImg from '../../../assets/images/banner.jpg'
 import useRole from '../../../hooks/useRole'
 
 const Profile = () => {
@@ -70,71 +10,70 @@ const Profile = () => {
   const { role, status, isRoleLoading } = useRole()
 
   if (isRoleLoading) {
-    return <p className="text-center mt-20">Loading...</p>
+    return <p className="text-center mt-20 text-xl">Loading...</p>
   }
 
   return (
-    <div className='flex justify-center items-center h-screen'>
+    <div className='flex justify-center items-center min-h-screen bg-gray-50'>
       <div className='bg-white shadow-lg rounded-2xl md:w-4/5 lg:w-3/5'>
+        {/* Cover Image */}
         <img
           alt='cover photo'
           src={coverImg}
-          className='w-full mb-4 rounded-t-lg h-56'
+          className='w-full mb-6 rounded-t-2xl object-cover h-48'
         />
 
-        <div className='flex flex-col items-center justify-center p-4 -mt-16'>
+        <div className='flex flex-col items-center justify-center p-6 -mt-16'>
+          {/* Profile Image */}
           <img
             alt='profile'
             src={user?.photoURL}
-            className='mx-auto object-cover rounded-full h-24 w-24 border-2 border-white'
+            className='rounded-full w-32 h-32 border-4 border-white shadow-lg object-cover'
           />
 
-          {/* ROLE */}
-          <p className='mt-2 px-4 py-1 text-xs text-white bg-lime-500 rounded-full'>
+          {/* Role */}
+          <p className='mt-3 px-5 py-1 text-sm font-semibold text-white bg-lime-500 rounded-full'>
             Role: {role}
           </p>
 
-          {/* STATUS */}
+          {/* Status */}
           <p
-            className={`mt-2 px-4 py-1 text-xs rounded-full text-white
+            className={`mt-2 px-5 py-1 text-sm font-semibold rounded-full text-white
               ${status === 'fraud' ? 'bg-red-500' : 'bg-green-500'}
             `}
           >
             Status: {status}
           </p>
 
-          <p className='mt-2 text-xl font-medium text-gray-800'>
+          {/* User Info */}
+          <p className='mt-4 text-xl font-semibold text-gray-800'>
             User Id: {user?.uid}
           </p>
 
-          <div className='w-full p-2 mt-4 rounded-lg'>
+          <div className='w-full mt-6 rounded-lg'>
             <div className='flex flex-wrap items-center justify-between text-sm text-gray-600'>
+              {/* Name */}
               <p className='flex flex-col'>
                 Name
-                <span className='font-bold'>{user?.displayName}</span>
+                <span className='font-bold text-gray-800'>{user?.displayName}</span>
               </p>
 
+              {/* Email */}
               <p className='flex flex-col'>
                 Email
-                <span className='font-bold'>{user?.email}</span>
+                <span className='font-bold text-gray-800'>{user?.email}</span>
               </p>
-
-              <div>
-                <button className='bg-lime-500 px-10 py-1 rounded-lg text-white hover:bg-lime-800 block mb-1'>
-                  Update Profile
-                </button>
-                <button className='bg-lime-500 px-7 py-1 rounded-lg text-white hover:bg-lime-800'>
-                  Change Password
-                </button>
-              </div>
             </div>
+
+            {/* Buttons */}
+          
           </div>
 
-          {/* FRAUD WARNING */}
+          {/* Fraud Warning */}
           {status === 'fraud' && (
-            <p className="mt-4 text-red-600 font-semibold">
-              ⚠ Your account has been marked as fraud. Some actions are disabled.
-            </p>
+            <div className="mt-6 bg-red-100 text-red-800 p-4 rounded-lg text-center">
+              ⚠ Your account has been flagged as fraud. Some actions may be restricted.
+            </div>
           )}
         </div>
       </div>

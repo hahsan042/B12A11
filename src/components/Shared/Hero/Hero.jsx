@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion'
 import heroImage from '../../../assets/images/banner.jpg' // replace with your image
 import Container from '../Container'
+import { useNavigate } from 'react-router-dom' // useNavigate import
 
 const Hero = () => {
+  const navigate = useNavigate(); // hook initialize
+
   return (
     <div>
       {/* Hero Section */}
@@ -23,9 +26,15 @@ const Hero = () => {
               <p className='text-gray-600 text-lg'>
                 Experience fresh, home-cooked meals from local chefs. Order your favorite meals anytime.
               </p>
-              <button className='px-6 py-3 bg-lime-600 hover:bg-lime-700 text-white rounded-lg font-semibold shadow-md transition'>
+              
+              {/* Order Now Button */}
+              <button
+                onClick={() => navigate("/meals")} // navigate to meals page
+                className='px-6 py-3 bg-lime-600 hover:bg-lime-700 text-white rounded-lg font-semibold shadow-md transition'
+              >
                 Order Now
               </button>
+             
             </motion.div>
 
             {/* Hero Image */}
@@ -42,44 +51,6 @@ const Hero = () => {
               />
             </motion.div>
 
-          </div>
-        </Container>
-      </section>
-
-      {/* Extra Section */}
-      <section className='bg-white py-20'>
-        <Container>
-          <h2 className='text-4xl font-bold text-center text-gray-900 mb-10'>
-            Why Choose LocalChefBazaar?
-          </h2>
-          <div className='grid md:grid-cols-3 gap-10'>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className='bg-gray-50 p-6 rounded-xl shadow-md text-center'
-            >
-              <h3 className='text-xl font-semibold mb-2'>Fresh Ingredients</h3>
-              <p className='text-gray-600'>
-                All meals are made with fresh and locally sourced ingredients.
-              </p>
-            </motion.div>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className='bg-gray-50 p-6 rounded-xl shadow-md text-center'
-            >
-              <h3 className='text-xl font-semibold mb-2'>Trusted Chefs</h3>
-              <p className='text-gray-600'>
-                Handpicked local chefs ensure every meal is delicious and safe.
-              </p>
-            </motion.div>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className='bg-gray-50 p-6 rounded-xl shadow-md text-center'
-            >
-              <h3 className='text-xl font-semibold mb-2'>Fast Delivery</h3>
-              <p className='text-gray-600'>
-                Quick and reliable delivery right to your doorstep.
-              </p>
-            </motion.div>
           </div>
         </Container>
       </section>
