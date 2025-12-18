@@ -5,11 +5,14 @@ import axios from "axios";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 import useAuth from "../../hooks/useAuth";
 import ReviewSection from "./ReviewSection/ReviewSection";
+import useRole from "../../hooks/useRole";
 
 const MealDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { status } = useRole();
+
 
   // Redirect to login if not logged in
   if (!user) {
@@ -52,12 +55,24 @@ const MealDetailsPage = () => {
         <p><strong>Chef Experience:</strong> {meal.chefExperience}</p>
       </div>
 
-    <button
+    {/* <button
   onClick={() => navigate(`/order/${meal._id}`)}
   className="mt-6 px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition"
 >
   Order Now
+</button> */}
+<button
+  disabled={status === 'fraud'}
+  onClick={() => navigate(`/order/${meal._id}`)}
+  className={`mt-6 px-6 py-3 rounded-lg
+    ${status === 'fraud'
+      ? 'bg-gray-400 cursor-not-allowed'
+      : 'bg-green-500 text-white'}
+  `}
+>
+  {status === 'fraud' ? 'You are blocked' : 'Order Now'}
 </button>
+
 
     <ReviewSection
   foodId={meal._id}

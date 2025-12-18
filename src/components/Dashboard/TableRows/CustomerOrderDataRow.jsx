@@ -27,7 +27,9 @@ const CustomerOrderDataRow = ({ order, refetchOrders }) => {
   // Set meal image based on foodId
   useEffect(() => {
     if (meals && order) {
-      const meal = meals.find((m) => m._id === order.foodId);
+      // const meal = meals.find((m) => m._id === order.foodId);
+      const meal = meals?.meals?.find(m => m._id === order.foodId);
+
       if (meal) setMealImage(meal.foodImage || '');
     }
   }, [meals, order]);
