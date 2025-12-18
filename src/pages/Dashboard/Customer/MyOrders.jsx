@@ -1,3 +1,6 @@
+
+
+
 // import { useQuery } from '@tanstack/react-query';
 // import axios from 'axios';
 // import CustomerOrderDataRow from '../../../components/Dashboard/TableRows/CustomerOrderDataRow';
@@ -45,7 +48,7 @@
 //                     <CustomerOrderDataRow
 //                       key={order._id}
 //                       order={order}
-//                       refetchOrders={refetch} // Pass refetch for automatic UI refresh
+//                       refetchOrders={refetch} // ✅ Refetch on demand
 //                     />
 //                   ))
 //                 ) : (
@@ -65,6 +68,8 @@
 // };
 
 // export default MyOrders;
+
+
 
 
 import { useQuery } from '@tanstack/react-query';
@@ -99,13 +104,13 @@ const MyOrders = () => {
             <table className="min-w-full leading-normal">
               <thead>
                 <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Status</th>
-                  <th>Payment</th>
-                  <th>Action</th>
+                  <th className="py-2 px-4 bg-gray-100 text-left text-xs font-semibold text-gray-600">Image</th>
+                  <th className="py-2 px-4 bg-gray-100 text-left text-xs font-semibold text-gray-600">Name</th>
+                  <th className="py-2 px-4 bg-gray-100 text-left text-xs font-semibold text-gray-600">Price</th>
+                  <th className="py-2 px-4 bg-gray-100 text-left text-xs font-semibold text-gray-600">Quantity</th>
+                  <th className="py-2 px-4 bg-gray-100 text-left text-xs font-semibold text-gray-600">Status</th>
+                  <th className="py-2 px-4 bg-gray-100 text-left text-xs font-semibold text-gray-600">Payment</th>
+                  <th className="py-2 px-4 bg-gray-100 text-left text-xs font-semibold text-gray-600">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -114,13 +119,13 @@ const MyOrders = () => {
                     <CustomerOrderDataRow
                       key={order._id}
                       order={order}
-                      refetchOrders={refetch} // ✅ Refetch on demand
+                      refetchOrders={refetch} // Refetch orders on update
                     />
                   ))
                 ) : (
                   <tr>
                     <td colSpan="7" className="text-center py-4">
-                      No orders found
+                      No orders found.
                     </td>
                   </tr>
                 )}
