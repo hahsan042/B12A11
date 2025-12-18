@@ -3,31 +3,26 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 const DeleteModal = ({ closeModal, isOpen, meal, user, refetchOrders }) => {
-  console.log(user);
-  
-const handleDelete = async () => {
-  if (!user) return Swal.fire('Error!', 'User not found', 'error');
+  const handleDelete = async () => {
+    if (!user) return Swal.fire('Error!', 'User not found', 'error');
 
-  try {
-    const token = await user.getIdToken();
+    try {
+      const token = await user.getIdToken();
 
-await axios.delete(`${import.meta.env.VITE_API_URL}/add-food/${meal._id}`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
+      await axios.delete(`${import.meta.env.VITE_API_URL}/add-food/${meal._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
+      Swal.fire('Deleted!', 'Your item has been deleted.', 'success');
+      closeModal();
 
-    Swal.fire('Deleted!', 'Your item has been deleted.', 'success');
-    closeModal();
-
-    refetchOrders?.(); // refresh UI
-  } catch (err) {
-    console.error(err);
-    Swal.fire('Error!', 'Failed to delete item.', 'error');
-  }
-};
-
-
-
+      // Refresh orders dynamically
+      if (refetchOrders) refetchOrders();
+    } catch (err) {
+      console.error(err);
+      Swal.fire('Error!', 'Failed to delete item.', 'error');
+    }
+  };
 
   return (
     <Dialog
@@ -38,30 +33,30 @@ await axios.delete(`${import.meta.env.VITE_API_URL}/add-food/${meal._id}`, {
     >
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
-          <DialogPanel className="w-full max-w-md bg-white p-6 backdrop-blur-2xl shadow-xl rounded-2xl">
-            <DialogTitle className="text-lg font-medium leading-6 text-gray-900">
-              Are you sure?
+          <DialogPanel className="w-full max-w-md bg-white p-6 rounded-xl shadow-xl border border-gray-300">
+            <DialogTitle className="text-lg font-semibold text-gray-900">
+              Are you sure you want to delete this item?
             </DialogTitle>
             <div className="mt-2">
-              <p className="text-sm text-gray-500">
-                You cannot undo once it&apos;s done!
+              <p className="text-sm text-gray-600">
+                This action is permanent and cannot be undone. Please confirm your decision.
               </p>
             </div>
-            <hr className="mt-4" />
-            <div className="flex mt-4 justify-around">
+            <hr className="my-4 border-t border-gray-200" />
+            <div className="flex mt-4 justify-around gap-4">
               <button
                 type="button"
                 onClick={handleDelete}
-                className="px-4 py-2 bg-green-100 text-green-900 rounded hover:bg-green-200"
+                className="px-5 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-all duration-200 focus:outline-none"
               >
-                Yes
+                Yes, Delete
               </button>
               <button
                 type="button"
                 onClick={closeModal}
-                className="px-4 py-2 bg-red-100 text-red-900 rounded hover:bg-red-200"
+                className="px-5 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-all duration-200 focus:outline-none"
               >
-                No
+                No, Cancel
               </button>
             </div>
           </DialogPanel>
